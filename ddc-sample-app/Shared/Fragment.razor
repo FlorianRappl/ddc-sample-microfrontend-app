@@ -1,0 +1,45 @@
+﻿@inject FragmentMap Fragments
+
+@{ 
+    if (Components is null)
+    {
+        return;
+    }
+    else
+    {
+        RenderFragment fragment = renderTreeBuilder =>
+        {
+            for (var i = 0; i < Components.Length; i++)
+            {
+                renderTreeBuilder.OpenComponent(i, Components[i]);
+
+                if (Attributes is not null)
+                {
+                    foreach (var (key, value) in Attributes)
+                    {
+                        renderTreeBuilder.AddAttribute(i, key, value);
+                    }
+                }
+
+                renderTreeBuilder.CloseComponent();
+            }
+        };
+        @fragment
+    }
+}
+
+@code {
+    [Parameter]
+    public string Name { get; set; }
+
+    [Parameter]
+    public Dictionary<string, object> Attributes { get; set; }
+
+    private Type[] Components { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        Components = Fragments.GetComponents(Name);
+    }
+}

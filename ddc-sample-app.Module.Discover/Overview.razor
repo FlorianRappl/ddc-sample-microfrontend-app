@@ -1,0 +1,12 @@
+﻿@attribute [Fragment("homepage")]
+
+@inject IGameRepository GameRepository 
+
+<div class="container-fluid d-flex flex-wrap">
+    @foreach (var game in GameRepository.GetAll())
+    {
+        <Card Game=@game />
+    }
+</div>
+
+@code {}

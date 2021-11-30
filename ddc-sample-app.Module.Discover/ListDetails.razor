@@ -1,0 +1,29 @@
+﻿@attribute [Fragment("list-details")]
+
+@inject IGameRepository GameRepository
+
+@if (_game is not null)
+{
+    <tr>
+        <td style="width: 20px">
+            <div style="width:inherit; height: 20px; background: url('@_game.Image') no-repeat center center; background-size: cover; border-radius: 5px"></div>
+        </td>
+        <td>
+            <a href="/game?id=@_game.Id">@_game.Name</a>
+        </td>
+        <td>@_game.Price.ToString("c")</td>
+    </tr>
+    }
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+
+    private Game _game;
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        _game = GameRepository.GetBy(Id);
+    }
+}

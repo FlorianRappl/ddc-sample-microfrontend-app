@@ -1,0 +1,49 @@
+﻿@page "/game?id={Id}"
+
+@inject IGameRepository GameRepository
+
+@if (_game is null)
+{
+    <div class="card container p-5">
+        <p>Woops, there is no game here. <a href="">Go back home.</a></p>
+    </div>
+}
+else
+{
+    <div class="card container p-5">
+        <h3 class="mb-5">Details for @_game.Name</h3>
+
+        <div class="d-flex flex-row flex-nowrap align-items-center">
+            <img src="@_game.Image" width="200" alt="@_game.Name box" style="padding: 0 2rem;" />
+            <div class="d-flex flex-column flex-grow-1">
+                <b>Name: </b> @_game.Name
+                <b>Price: </b> @_game.Price.ToString("C")
+            </div>
+
+            <div class="d-flex flex-column">
+                @{ var attributes = new Dictionary<string, object>() {
+                    { "GameId", _game.Id },
+                    { "Price", _game.Price },
+                }; }
+                <Fragment Name="details-actions" Attributes="attributes" />
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public string Id { get; set; }
+
+    private Game _game;
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+
+        if (int.TryParse(Id, out var id))
+        {
+            _game = GameRepository.GetBy(id);
+        }
+    }
+}

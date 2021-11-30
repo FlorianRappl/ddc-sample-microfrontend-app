@@ -1,0 +1,56 @@
+﻿@page "/cart"
+
+@inject ICartRepository CartRepository
+@inject NavigationManager NavigationManager
+
+@if (!_games.Any())
+{
+    <div class="container card p-5">
+        <p>No games yet. <a href="">Browse for games!</a></p>
+    </div>
+}
+else
+{
+    <div class="container card p-5 d-flex flex-column">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>Item</th>
+                    <th>Price</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var game in _games)
+                {
+                    var attributes = new Dictionary<string, object>() {
+                           { "Id", game.GameId },
+                    };
+                    <Fragment Name="list-details" Attributes="attributes" />
+                }
+            </tbody>
+        </table>
+
+        <button class="btn btn-success" @onclick="Order">Order!</button>
+
+    </div>
+}
+
+@code {
+    private IEnumerable<CartEntry> _games;
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        _games = CartRepository.Get().Games;
+    }
+
+    private void Order()
+    {
+        if (_games.Any())
+        {
+            CartRepository.ClearCart();
+            NavigationManager.NavigateTo("/order-confirmation");
+        }
+    }
+}
